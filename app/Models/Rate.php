@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Rate extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'assessor_id',
+        'tutor_id',
+        'star',
+        'comment'
+    ];
 }

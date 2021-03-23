@@ -11,6 +11,13 @@ class Profile extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        'sex',
+        'address',
+        'achivements',
+        'avatar'
+    ];
+
     protected $casts = [
         'achivements' => 'array'
     ];
