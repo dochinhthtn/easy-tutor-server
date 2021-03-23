@@ -25,7 +25,12 @@ class RegisterRequest extends APIRequest
     public function rules()
     {
         return [
-            'email' => 'required'
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email',
+            'phoneNumber' => 'required',
+            'password' => 'required',
+            'passwordConfirmation' => 'required|same:password',
+            'isTutor' => 'required'
         ];
     }
 }
