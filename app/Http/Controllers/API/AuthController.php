@@ -4,6 +4,10 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest\LoginRequest;
+use App\Http\Requests\UserRequest\RegisterRequest;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller {
     //
@@ -17,7 +21,18 @@ class AuthController extends Controller {
         ], 401);
     }
 
-    public function register() {
+    public function register(RegisterRequest $request) {
+        $newUser = User::create([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'phone_number' => $request->input('phoneNumber'),
+            'password' => Hash::make($request->input('name')),
+            'role_id' => ($request->input('isTutor')) ? 2 : 3
+        ]);
+
+        return response()->json([
+            'message' => 'Register successfully'
+        ]);
 
     }
 
