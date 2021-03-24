@@ -27,7 +27,7 @@ class RegisterRequest extends APIRequest
         return [
             'name' => 'required',
             'email' => 'required|email|unique:users,email',
-            'phoneNumber' => 'required',
+            'phoneNumber' => 'required|unique:users,phone_number',
             'password' => 'required',
             'passwordConfirmation' => 'required|same:password',
             'isTutor' => 'required'
