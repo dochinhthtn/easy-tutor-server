@@ -17,6 +17,6 @@ class UserController extends Controller {
     }
 
     public function getProfile(User $user) {
-
+        
     }
 }
