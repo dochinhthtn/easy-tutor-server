@@ -29,7 +29,7 @@ class UserFactory extends Factory
             'phone_number' => $this->faker->phoneNumber,
             'verified_at' => now(),
             'password' => Hash::make('12345678'),
-            'role_id' => $this->faker->numberBetween(1, 2),
+            'role_id' => $this->faker->numberBetween(1, 3),
             'remember_token' => Str::random(10),
         ];
     }
