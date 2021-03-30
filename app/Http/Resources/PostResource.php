@@ -16,13 +16,13 @@ class PostResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'user' => $this->user,
-            'subject' => $this->subject,
+            'user' => new UserResource($this->whenLoaded('user')),
+            'subject' => new SubjectResource($this->subject),
             'description' => $this->description,
             'address' => $this->address,
             'offer' => $this->offer,
             'tutor' => $this->tutor,
-            'applicants' => $this->whenLoaded('applicants')
+            'applicants' => UserResource::collection($this->whenLoaded('applicants'))
         ];
     }
 }

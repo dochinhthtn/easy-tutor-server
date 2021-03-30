@@ -21,7 +21,7 @@ class UserResource extends JsonResource
             'phoneNumber' => $this->phone_number,
             'profile' => $this->whenLoaded('profile'),
             'role' => $this->role->name,
-            'subjects' => $this->whenLoaded('subjects')
+            'subjects' => SubjectResource::collection($this->whenLoaded('subjects'))
         ];
     }
 }
