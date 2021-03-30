@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\PostController;
+use App\Http\Controllers\API\SubjectController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,4 +29,21 @@ Route::group(['prefix' => 'auth'], function () {
 Route::group(['prefix' => 'user', 'middleware' => ['auth:api']], function () {
     Route::post('/profile', [UserController::class, 'updateProfile']);
     Route::get('/{user:id}', [UserController::class, 'getProfile']);
+});
+
+Route::group(['prefix' => 'subject', 'middleware' => ['auth:api']], function() {
+    Route::get('/', [SubjectController::class, 'getSubjects']);
+    Route::get('/{subject:id}', [SubjectController::class, 'getSubject']);
+    Route::post('/', [SubjectController::class, 'addSubject']);
+    Route::put('/', [SubjectController::class, 'editSubject']);
+    Route::get('/find/{keyword}', [SubjectController::class, 'findSubjects']);
+});
+
+Route::group(['prefix' => 'post', 'middleware' => ['auth:api']], function() {
+    Route::get('/', [PostController::class, 'getAllPosts']);
+    Route::get('/own', [PostController::class, 'getOwnPosts']);
+    Route::get('/recommended', [PostController::class, 'getRecommendedPosts']);
+    Route::get('/{post:id}', [PostController::class, 'getPost']);
+    Route::post('/', [PostController::class, 'addPost']);
+    Route::put('/{post:id}', [PostController::class, 'editPost']);
 });
