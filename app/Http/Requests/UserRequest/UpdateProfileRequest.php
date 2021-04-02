@@ -26,7 +26,7 @@ class UpdateProfileRequest extends APIRequest
         return [
             'sex' => 'required',
             'address' => 'required',
-            'achivements' => 'required',
+            'achievements' => 'nullable|array',
             'avatar' => 'required|image'
         ];
     }
