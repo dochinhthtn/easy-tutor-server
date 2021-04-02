@@ -11,7 +11,7 @@ use App\Models\User;
 class PostController extends Controller {
     //
 
-    public User $currentUser;
+    public ?User $currentUser;
 
     public function __construct() {
         $this->currentUser = auth()->user();
@@ -65,8 +65,41 @@ class PostController extends Controller {
         return new PostResource($post);
     }
 
-    public function applyPost() {
+    public function applyPost(Post $post) {
+        if($this->currentUser != '2') {
+            return response()->json([
+                'message' => 'You are not a tutor'
+            ], 401);
+        }
 
+        $appliedPosts = $this->currentUser->appliedPosts()->where('post_id', '=', $post->id)->get();
+        if($appliedPosts->count() > 0) {
+            return response()->json([
+                'message' => 'You have already applied this post'
+            ], 403);
+        } else {
+            $this->currentUser->appliedPosts()->attach($post->id);
+            return response()->json([
+                'message' => 'Successfully applied this post'
+            ]);
+        }
+    }
+
+    public function acceptTutor(Post $post, User $user) {
+
+        if($user->role_id != 2) {
+            return response()->json([
+                'message' => 'User is not a tutor'
+            ], 403);
+        }
+
+        $post->update([
+            'tutor_id' => $user->id 
+        ]);
+
+        return response()->json([
+            'message' => 'Successfully accepted tutor'
+        ]);
     }
 
 }
