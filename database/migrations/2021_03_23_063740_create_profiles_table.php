@@ -14,10 +14,11 @@ class CreateProfilesTable extends Migration
     public function up()
     {
         Schema::create('profiles', function (Blueprint $table) {
+            $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->string('sex', 191);
             $table->string('address', 191);
-            $table->json('achievements');
+            $table->json('achievements')->nullable();
             $table->string('avatar', 191);
         });
     }
