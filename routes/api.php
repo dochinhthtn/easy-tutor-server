@@ -37,7 +37,7 @@ Route::group(['prefix' => 'subject', 'middleware' => ['auth:api']], function() {
     Route::get('/', [SubjectController::class, 'getSubjects']);
     Route::get('/{subject:id}', [SubjectController::class, 'getSubject']);
     Route::post('/', [SubjectController::class, 'addSubject']);
-    Route::put('/', [SubjectController::class, 'editSubject']);
+    Route::put('/{subject:id}', [SubjectController::class, 'editSubject']);
     Route::get('/find/{keyword}', [SubjectController::class, 'findSubjects']);
 });
 
