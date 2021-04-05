@@ -27,7 +27,7 @@ class UpdateProfileRequest extends APIRequest
             'sex' => 'required',
             'address' => 'required',
             'achievements' => 'nullable|array',
-            'avatar' => 'required|image'
+            'avatar' => 'nullable|image'
         ];
     }
 }
