@@ -20,7 +20,7 @@ class UserController extends Controller {
     }
 
     public function getSubjects() {
-        return SubjectResource::collection($this->currentUser->subjects());
+        return SubjectResource::collection($this->currentUser->subjects()->get());
     }
 
     public function updateSubjects(UpdateSubjectRequest $request) {
@@ -46,7 +46,9 @@ class UserController extends Controller {
         $profile->sex = $request->input('sex');
         $profile->address = $request->input('address');
         $profile->achievements = json_encode($request->input('achivements', []));
-        $profile->avatar = $this->uploadAvatar($request->file('avatar'));
+        if($request->has('avatar')) {
+            $profile->avatar = $this->uploadAvatar($request->file('avatar'));
+        }
         $profile->save();
 
         return response()->json([
@@ -61,9 +63,9 @@ class UserController extends Controller {
 
     public function getProfile(?User $user) {
         if ($user == null) {
-            return $this->currentUser->profile()->get();
+            return response()->json($this->currentUser->profile()->get());
         } else {
-            return $user->profile()->get();
+            return response()->json($user->profile()->get());
         }
     }
 }
