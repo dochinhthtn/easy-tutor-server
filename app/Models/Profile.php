@@ -14,12 +14,12 @@ class Profile extends Model
     protected $fillable = [
         'sex',
         'address',
-        'achivements',
+        'achievements',
         'avatar'
     ];
 
     protected $casts = [
-        'achivements' => 'array'
+        'achievements' => 'array'
     ];
 
     public function user() {
