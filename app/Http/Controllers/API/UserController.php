@@ -62,10 +62,10 @@ class UserController extends Controller {
     }
 
     public function getProfile(?User $user) {
-        if ($user == null) {
-            return response()->json($this->currentUser->profile()->get());
+        if (!isset($user->id)) {
+            return response()->json($this->currentUser->profile()->first());
         } else {
-            return response()->json($user->profile()->get());
+            return response()->json($user->profile()->first());
         }
     }
 }
