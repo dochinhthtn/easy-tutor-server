@@ -33,6 +33,7 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::group(['prefix' => 'user', 'middleware' => ['auth:api']], function () {
+    Route::get('/', [UserController::class, 'getInfo']);
     Route::get('/subject', [UserController::class, 'getSubjects']);
     Route::post('/subject', [UserController::class, 'updateSubjects']);
     Route::get('/profile/{user:id?}', [UserController::class, 'getProfile']);
