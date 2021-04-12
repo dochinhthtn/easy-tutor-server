@@ -1,4 +1,9 @@
 {
+    "name": "server-socket",
+    "version": "1.0.0",
+    "main": "server.js",
+    "author": "",
+    "license": "ISC",
     "private": true,
     "scripts": {
         "dev": "npm run development",
@@ -10,9 +15,12 @@
         "production": "mix --production"
     },
     "devDependencies": {
-        "axios": "^0.21",
+        "axios": "^0.21.1",
         "laravel-mix": "^6.0.6",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14"
+    },
+    "dependencies": {
+        "socket.io": "^4.0.1"
     }
 }
