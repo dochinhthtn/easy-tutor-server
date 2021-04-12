@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest\UpdateProfileRequest;
 use App\Http\Requests\UserRequest\UpdateSubjectRequest;
 use App\Http\Resources\SubjectResource;
+use App\Http\Resources\UserResource;
 use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
@@ -17,6 +18,10 @@ class UserController extends Controller {
 
     public function __construct() {
         $this->currentUser = auth()->user();
+    }
+
+    public function getInfo() {
+        return new UserResource($this->currentUser);
     }
 
     public function getSubjects() {
