@@ -9,6 +9,10 @@ class Conversation extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name'
+    ];
+
     public function users() {
         return $this->belongsToMany(User::class, 'conversations_users', 'conversation_id', 'user_id');
     }
