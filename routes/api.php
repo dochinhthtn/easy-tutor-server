@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\ConversationController;
 use App\Http\Controllers\API\PostController;
 use App\Http\Controllers\API\SubjectController;
 use App\Http\Controllers\API\UserController;
@@ -56,4 +57,11 @@ Route::group(['prefix' => 'post', 'middleware' => ['auth:api']], function() {
     Route::post('/', [PostController::class, 'addPost']);
     Route::put('/{post:id}', [PostController::class, 'editPost']);
     Route::get('/apply/{post:id}', [PostController::class, 'applyPost']);
+});
+
+Route::group(['prefix' => 'conversation', 'middleware' => ['auth:api']], function () {
+    Route::get('/', [ConversationController::class, 'getConversations']);
+    Route::get('/{conversation:id}', [ConversationController::class, 'getConversation']);
+    Route::post('/', [ConversationController::class, 'addConversation']);
+    Route::post('/{conversation:id}/message', [ConversationController::class, 'addMessage']);
 });
