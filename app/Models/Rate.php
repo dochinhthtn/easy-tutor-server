@@ -15,4 +15,14 @@ class Rate extends Model
         'star',
         'comment'
     ];
+
+    public function assessor() {
+        return $this->belongsTo(User::class, 'assessor_id');
+    }
+
+    public function tutor() {
+        return $this->belongsTo(User::class, 'tutor_id');
+    }
+
+
 }
