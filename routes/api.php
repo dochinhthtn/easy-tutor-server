@@ -22,9 +22,9 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::get('/token', function() {
+Route::get('/token', function () {
     return response()->json([
-        'token' => csrf_token()
+        'token' => csrf_token(),
     ]);
 });
 
@@ -41,7 +41,7 @@ Route::group(['prefix' => 'user', 'middleware' => ['auth:api']], function () {
     Route::post('/profile', [UserController::class, 'updateProfile']);
 });
 
-Route::group(['prefix' => 'subject', 'middleware' => ['auth:api']], function() {
+Route::group(['prefix' => 'subject', 'middleware' => ['auth:api']], function () {
     Route::get('/', [SubjectController::class, 'getSubjects']);
     Route::get('/{subject:id}', [SubjectController::class, 'getSubject']);
     Route::post('/', [SubjectController::class, 'addSubject']);
@@ -49,14 +49,16 @@ Route::group(['prefix' => 'subject', 'middleware' => ['auth:api']], function() {
     Route::get('/find/{keyword}', [SubjectController::class, 'findSubjects']);
 });
 
-Route::group(['prefix' => 'post', 'middleware' => ['auth:api']], function() {
+Route::group(['prefix' => 'post', 'middleware' => ['auth:api']], function () {
     Route::get('/', [PostController::class, 'getAllPosts']);
     Route::get('/own', [PostController::class, 'getOwnPosts']);
     Route::get('/recommended', [PostController::class, 'getRecommendedPosts']);
     Route::get('/{post:id}', [PostController::class, 'getPost']);
     Route::post('/', [PostController::class, 'addPost']);
     Route::put('/{post:id}', [PostController::class, 'editPost']);
-    Route::get('/apply/{post:id}', [PostController::class, 'applyPost']);
+    Route::post('/{post:id}/apply', [PostController::class, 'applyPost']);
+    Route::post('/{post:id}/accept/{user:id}', [PostController::class, 'acceptTutor']);
+    Route::post('/{post:id}/decline/{user:id}', [PostController::class, 'declineTutor']);
 });
 
 Route::group(['prefix' => 'conversation', 'middleware' => ['auth:api']], function () {
@@ -64,4 +66,8 @@ Route::group(['prefix' => 'conversation', 'middleware' => ['auth:api']], functio
     Route::get('/{conversation:id}', [ConversationController::class, 'getConversation']);
     Route::post('/', [ConversationController::class, 'addConversation']);
     Route::post('/{conversation:id}/message', [ConversationController::class, 'addMessage']);
+});
+
+Route::group(['prefix' => 'rate', 'middleware' => ['auth:api']], function () {
+    
 });
