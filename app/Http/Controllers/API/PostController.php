@@ -11,7 +11,7 @@ use App\Models\User;
 class PostController extends Controller {
     //
 
-    public ?User $currentUser;
+    public  ? User $currentUser;
 
     public function __construct() {
         $this->currentUser = auth()->user();
@@ -33,7 +33,7 @@ class PostController extends Controller {
     }
 
     public function getPost(Post $post) {
-        return new PostResource($post->with('applicants'));
+        return new PostResource($post->load('applicants'));
     }
 
     public function addPost(PostEditorRequest $request) {
@@ -49,9 +49,9 @@ class PostController extends Controller {
     }
 
     public function editPost(PostEditorRequest $request, Post $post) {
-        if($post->user_id != $this->currentUser->id) {
+        if ($post->user_id != $this->currentUser->id) {
             return response()->json([
-                'message' => 'You are not owned this post'
+                'message' => 'You are not owned this post',
             ], 401);
         }
 
@@ -66,39 +66,66 @@ class PostController extends Controller {
     }
 
     public function applyPost(Post $post) {
-        if($this->currentUser != '2') {
+        if (!$this->currentUser->checkRole('tutor')) {
             return response()->json([
-                'message' => 'You are not a tutor'
+                'message' => 'You are not a tutor',
             ], 401);
         }
 
         $appliedPosts = $this->currentUser->appliedPosts()->where('post_id', '=', $post->id)->get();
-        if($appliedPosts->count() > 0) {
+        if ($appliedPosts->count() > 0) {
             return response()->json([
-                'message' => 'You have already applied this post'
+                'message' => 'You have already applied this post',
             ], 403);
         } else {
             $this->currentUser->appliedPosts()->attach($post->id);
             return response()->json([
-                'message' => 'Successfully applied this post'
+                'message' => 'Successfully applied this post',
             ]);
         }
     }
 
     public function acceptTutor(Post $post, User $user) {
-
-        if($user->role_id != 2) {
+        if($this->currentUser->id != $post->user_id) {
             return response()->json([
-                'message' => 'User is not a tutor'
-            ], 403);
+                'message' => 'You are not owner of this post'
+            ], 400);
+        }
+
+        if (!$user->checkRole('tutor')) {
+            return response()->json([
+                'message' => 'User is not a tutor',
+            ], 400);
         }
 
         $post->update([
-            'tutor_id' => $user->id 
+            'tutor_id' => $user->id,
         ]);
 
         return response()->json([
-            'message' => 'Successfully accepted tutor'
+            'message' => 'Successfully accepted tutor',
+        ]);
+    }
+
+    public function declineTutor(Post $post, User $user) {
+        if($this->currentUser->id != $post->user_id) {
+            return response()->json([
+                'message' => 'You are not owner of this post'
+            ], 400);
+        }
+
+        if (!$user->checkRole('tutor')) {
+            return response()->json([
+                'message' => 'User is not a tutor'
+            ], 400);
+        }
+
+        $post->update([
+            'tutor_id' => null
+        ]);
+
+        return response()->json([
+            'message' => 'Successfully decline tutor'
         ]);
     }
 
