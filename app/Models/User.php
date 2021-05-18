@@ -7,9 +7,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable implements JWTSubject{
+class User extends Authenticatable implements JWTSubject {
     use HasFactory, Notifiable;
-
 
     /**
      * The attributes that are mass assignable.
@@ -21,7 +20,7 @@ class User extends Authenticatable implements JWTSubject{
         'email',
         'phone_number',
         'password',
-        'role_id'
+        'role_id',
     ];
 
     /**
@@ -69,6 +68,11 @@ class User extends Authenticatable implements JWTSubject{
 
     public function conversations() {
         return $this->belongsToMany(Conversation::class, 'conversations_users', 'user_id', 'conversation_id');
+    }
+
+    public function checkRole(string $roleName) {
+        $roles = ["admin" => 1, "tutor" => 2, "user" => 3];
+        return $roles[strtolower($roleName)] == $this->role_id;
     }
 
     /**
