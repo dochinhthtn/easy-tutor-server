@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\RateRequest;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\APIRequest;
 
-class RateEditorRequest extends FormRequest
+class RateEditorRequest extends APIRequest
 {
     /**
      * Determine if the user is authorized to make this request.
