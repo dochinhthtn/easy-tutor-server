@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UserRequest\LoginRequest;
 use App\Http\Requests\UserRequest\RegisterRequest;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,7 +13,9 @@ class AuthController extends Controller {
     //
     public function login(LoginRequest $request) {
         if ($token = auth()->attempt($request->only(['email', 'password']))) {
-            return $this->respondWithToken($token);
+            $userResource = new UserResource(auth()->user());
+            $userResource->additional(['token' => 'bearer ' . $token]);
+            return $userResource;
         }
 
         return response()->json([
@@ -28,6 +31,7 @@ class AuthController extends Controller {
             'password' => Hash::make($request->input('password')),
             'role_id' => ($request->input('isTutor')) ? 2 : 3
         ]);
+
 
         return response()->json([
             'message' => 'Register successfully'
