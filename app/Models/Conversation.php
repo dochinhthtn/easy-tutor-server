@@ -21,4 +21,9 @@ class Conversation extends Model
         return $this->hasMany(Message::class, 'conversation_id');
     }
 
+    public function hasUser(User $user) {
+        $count = $this->users()->wherePivot('user_id', '=', $user->id)->get()->count();
+        return $count > 0;
+    }
+
 }
