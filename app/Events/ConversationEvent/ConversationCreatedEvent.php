@@ -35,6 +35,6 @@ class ConversationCreatedEvent implements ShouldBroadcast {
     }
 
     public function broadcastAs() {
-        return 'conversation-created';
+        return 'new-conversation';
     }
 }

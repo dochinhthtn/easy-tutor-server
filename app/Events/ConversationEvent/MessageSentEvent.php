@@ -30,10 +30,10 @@ class MessageSentEvent implements ShouldBroadcast {
      * @return \Illuminate\Broadcasting\Channel|array
      */
     public function broadcastOn() {
-        return new PrivateChannel('conversation-' . $this->message->conversation->id);
+        return new PrivateChannel('conversation.' . $this->message->conversation_id);
     }
 
     public function broadcastAs() {
-        return 'message-sent';
+        return 'new-message';
     }
 }
