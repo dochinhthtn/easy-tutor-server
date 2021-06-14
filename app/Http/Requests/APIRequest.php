@@ -8,27 +8,14 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Response;
 
 class APIRequest extends FormRequest {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize() {
-        return true;
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules() {
-        return [
-            //
-        ];
-    }
 
     protected function failedValidation(Validator $validator) {
         throw new HttpResponseException(new Response($validator->errors(), 400));
+    }
+
+    protected function failedAuthorization() {
+        throw new HttpResponseException(new Response([
+            'message' => "You don't have permission to do this"
+        ], 403));
     }
 }
