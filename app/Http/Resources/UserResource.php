@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
 {
+    public static $wrap = "user";
     /**
      * Transform the resource into an array.
      *
@@ -24,4 +25,5 @@ class UserResource extends JsonResource
             'subjects' => SubjectResource::collection($this->whenLoaded('subjects'))
         ];
     }
+
 }

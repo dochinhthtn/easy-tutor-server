@@ -6,6 +6,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class RateResource extends JsonResource
 {
+    public static $wrap = "rate";
     /**
      * Transform the resource into an array.
      *
