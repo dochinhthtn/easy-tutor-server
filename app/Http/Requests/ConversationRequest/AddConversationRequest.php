@@ -3,17 +3,14 @@
 namespace App\Http\Requests\ConversationRequest;
 
 use App\Http\Requests\APIRequest;
-use Illuminate\Foundation\Http\FormRequest;
 
-class AddConversationRequest extends APIRequest
-{
+class AddConversationRequest extends APIRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
+    public function authorize() {
         return true;
     }
 
@@ -22,12 +19,11 @@ class AddConversationRequest extends APIRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             'name' => 'nullable',
             'users' => 'required|array',
-            'users.*' => 'exists:users,id'
+            'users.*' => 'exists:users,id',
         ];
     }
 }
