@@ -11,7 +11,9 @@ class SubjectController extends Controller {
     //
 
     public function getSubjects() {
-        return SubjectResource::collection(Subject::paginate(15));
+        $collection = SubjectResource::collection(Subject::paginate(15));
+        $collection->wrap('subjects');
+        return $collection;
     }
 
     public function getSubject(Subject $subject) {
@@ -37,7 +39,11 @@ class SubjectController extends Controller {
     }
 
     public function findSubjects(string $keyword) {
-        $query = Subject::whereRaw("name LIKE '%$keyword%'")->paginate(15);
-        return SubjectResource::collection($query);
+        $collection = SubjectResource::collection(
+            Subject::whereRaw("name LIKE '%$keyword%'")
+            ->paginate(15)
+        );
+        $collection->wrap('subjects');
+        return $collection;
     }
 }

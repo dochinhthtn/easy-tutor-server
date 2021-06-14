@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Events\PostEvent\NewApplicantEvent;
+use App\Events\TaskEvent;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PostRequest\AddPostApplicantsRequest;
+use App\Http\Requests\PostRequest\HandleTutorRequest;
 use App\Http\Requests\PostRequest\PostEditorRequest;
 use App\Http\Resources\PostResource;
+use App\Http\Resources\UserResource;
 use App\Models\Post;
 use App\Models\User;
 
@@ -18,22 +23,54 @@ class PostController extends Controller {
     }
 
     public function getOwnPosts() {
-        $query = $this->currentUser->posts()->orderBy('created_at', 'desc');
-        return PostResource::collection($query->paginate(15));
+
+        $collection = PostResource::collection(
+            $this->currentUser
+                ->posts()
+                ->orderBy('created_at', 'desc')
+                ->with(['applicants', 'tutor', 'user'])
+                ->paginate(15)
+        );
+        $collection->wrap('posts');
+        return $collection;
     }
 
     public function getRecommendedPosts() {
         $subjectIds = $this->currentUser->subjects()->get(['id'])->toArray();
-        $query = Post::whereIn('subject_id', $subjectIds)->orderBy('created_at', 'desc')->with('user');
-        return PostResource::collection($query->paginate(15));
+
+        $collection = PostResource::collection(
+            Post::whereIn('subject_id', $subjectIds)
+                ->orderBy('created_at', 'desc')
+                ->with(['applicants', 'tutor', 'user'])
+                ->paginate(15)
+        );
+
+        $collection->wrap('posts');
+        return $collection;
     }
 
     public function getAllPosts() {
-        return PostResource::collection(Post::orderBy('created_at', 'desc')->with('user')->paginate(15));
+        $collection = PostResource::collection(
+            Post::orderBy('created_at', 'desc')
+                ->with(['applicants', 'tutor', 'user'])
+                ->paginate(15)
+        );
+        $collection->wrap('posts');
+        return $collection;
     }
 
     public function getPost(Post $post) {
-        return new PostResource($post->load('applicants'));
+        return new PostResource($post->load(['applicants', 'user', 'tutor']));
+    }
+
+    public function getPostApplicants(Post $post) {
+        $collection = UserResource::collection($post->applicants()->get());
+        $collection->wrap('applicants');
+        return $collection;
+    }
+
+    public function getPostTutor(Post $post) {
+
     }
 
     public function addPost(PostEditorRequest $request) {
@@ -65,68 +102,34 @@ class PostController extends Controller {
         return new PostResource($post);
     }
 
-    public function applyPost(Post $post) {
-        if (!$this->currentUser->checkRole('tutor')) {
-            return response()->json([
-                'message' => 'You are not a tutor',
-            ], 401);
-        }
+    public function addPostApplicant(AddPostApplicantsRequest $request, Post $post) {
+        $applicant = User::find($request->input('userId'));
+        $post->applicants()->syncWithoutDetaching($applicant->id);
 
-        $appliedPosts = $this->currentUser->appliedPosts()->where('post_id', '=', $post->id)->get();
-        if ($appliedPosts->count() > 0) {
-            return response()->json([
-                'message' => 'You have already applied this post',
-            ], 403);
-        } else {
-            $this->currentUser->appliedPosts()->attach($post->id);
-            return response()->json([
-                'message' => 'Successfully applied this post',
+        event(new NewApplicantEvent(new PostResource($post), new UserResource($applicant)));
+        event(new TaskEvent("my message"));
+        return response()->json([
+            'message' => 'Successfully added applicant',
+        ]);
+    }
+
+    public function handleTutor(HandleTutorRequest $request, Post $post) {
+
+        $userId = $request->input('userId');
+        $action = $request->input('action');
+
+        if ($action == 'accept') {
+            $post->update([
+                'tutor_id' => $userId,
+            ]);
+        } else if ($action == 'decline') {
+            $post->update([
+                'tutor_id' => null,
             ]);
         }
-    }
-
-    public function acceptTutor(Post $post, User $user) {
-        if($this->currentUser->id != $post->user_id) {
-            return response()->json([
-                'message' => 'You are not owner of this post'
-            ], 400);
-        }
-
-        if (!$user->checkRole('tutor')) {
-            return response()->json([
-                'message' => 'User is not a tutor',
-            ], 400);
-        }
-
-        $post->update([
-            'tutor_id' => $user->id,
-        ]);
 
         return response()->json([
-            'message' => 'Successfully accepted tutor',
+            'message' => 'Successfully',
         ]);
     }
-
-    public function declineTutor(Post $post, User $user) {
-        if($this->currentUser->id != $post->user_id) {
-            return response()->json([
-                'message' => 'You are not owner of this post'
-            ], 400);
-        }
-
-        if (!$user->checkRole('tutor')) {
-            return response()->json([
-                'message' => 'User is not a tutor'
-            ], 400);
-        }
-
-        $post->update([
-            'tutor_id' => null
-        ]);
-
-        return response()->json([
-            'message' => 'Successfully decline tutor'
-        ]);
-    }
-
 }

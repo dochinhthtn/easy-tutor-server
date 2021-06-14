@@ -7,7 +7,6 @@ use App\Http\Requests\UserRequest\UpdateProfileRequest;
 use App\Http\Requests\UserRequest\UpdateSubjectRequest;
 use App\Http\Resources\SubjectResource;
 use App\Http\Resources\UserResource;
-use App\Models\Profile;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -25,7 +24,9 @@ class UserController extends Controller {
     }
 
     public function getSubjects() {
-        return SubjectResource::collection($this->currentUser->subjects()->get());
+        $collection = SubjectResource::collection($this->currentUser->subjects()->get());
+        $collection->wrap('subjects');
+        return $collection;
     }
 
     public function updateSubjects(UpdateSubjectRequest $request) {
@@ -51,7 +52,7 @@ class UserController extends Controller {
         $profile->sex = $request->input('sex');
         $profile->address = $request->input('address');
         $profile->achievements = json_encode($request->input('achivements', []));
-        if($request->has('avatar')) {
+        if ($request->has('avatar')) {
             $profile->avatar = $this->uploadAvatar($request->file('avatar'));
         }
         $profile->save();
@@ -66,11 +67,11 @@ class UserController extends Controller {
         return asset("storage/{$image->hashName()}");
     }
 
-    public function getProfile(?User $user) {
-        if (!isset($user->id)) {
-            return response()->json($this->currentUser->profile()->first());
+    public function getProfile(?User $user = null) {
+        if ($user == null) {
+            return new UserResource($this->currentUser->load('profile'));
         } else {
-            return response()->json($user->profile()->first());
+            return new UserResource($user->load('profile'));
         }
     }
 }

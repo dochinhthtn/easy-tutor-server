@@ -24,26 +24,42 @@ class ConversationController extends Controller {
     }
 
     public function getConversations() {
-        return ConversationResource::collection($this->currentUser->conversations()->paginate(15));
+        $collection = ConversationResource::collection($this->currentUser->conversations()->with('users')->paginate(15));
+        $collection->wrap('conversations');
+        return $collection;
     }
 
     public function getConversation(Conversation $conversation) {
-        return new ConversationResource($conversation->load('messages', 'users'));
+        if ($conversation->hasUser($this->currentUser)) {
+            return new ConversationResource($conversation->load('messages', 'users'));
+        }
+
+        return response()->json([
+            'message' => 'You are not in this conversation'
+        ], 400);
     }
 
     public function addConversation(AddConversationRequest $request) {
+        $usersId = $request->input('users');
+
+        if(!in_array($this->currentUser->id, $usersId)) {
+            return response()->json([
+                'message' => 'Some error occured :((('
+            ], 400);
+        }
+
         $result = DB::table('conversations_users')
             ->selectRaw('COUNT(conversation_id) AS conversationCount')
-            ->whereIn('user_id', $request->input('users'))
+            ->whereIn('user_id', $usersId)
             ->groupBy('conversation_id')
             ->orderBy('conversationCount', 'desc')
             ->limit(1)
             ->get();
 
         $conversationCount = $result->pluck('conversationCount')->first();
-        if($conversationCount == count($request->input('users'))) {
+        if ($conversationCount == count($request->input('users'))) {
             return response()->json([
-                'message' => 'Conversation has already created'
+                'message' => 'Conversation has already created',
             ], 400);
         }
 
@@ -57,36 +73,44 @@ class ConversationController extends Controller {
 
         event(new ConversationCreatedEvent($conversation));
 
-        return response()->json([
-            'message' => 'Create conversation successfully',
-            'conversation' => $conversation
-        ]);
+        return new ConversationResource($conversation);
     }
 
     public function addMessage(AddMessageRequest $request, Conversation $conversation) {
-        $exist = $conversation->users()->wherePivot('user_id', '=', $this->currentUser->id)->count();
-        
-        if($exist == 0) {
+
+        if (!$conversation->hasUser($this->currentUser)) {
             return response()->json([
-                'message' => 'You are not in this conversation'
+                'message' => 'You are not in this conversation',
             ], 400);
         }
 
         $message = Message::create([
             'content' => $request->input('content'),
             'user_id' => $this->currentUser->id,
-            'conversation_id' => $conversation->id
+            'conversation_id' => $conversation->id,
         ]);
 
         event(new MessageSentEvent($message));
-        
+
         return response()->json([
-            'message' => 'Message was sent'
+            'message' => 'Message was sent',
         ]);
     }
 
-    public function getMessages($conversationId) {
-        $query = Message::where('conversation_id', $conversationId)->orderBy('created_at', 'desc')->paginate(15);
-        return MessageResource::collection($query);
+    public function getMessages(Conversation $conversation) {
+        if(!$conversation->hasUser($this->currentUser)) {
+            return response()->json([
+                'message' => 'You are not in this conversation'
+            ], 400);
+        }
+
+        $collection = MessageResource::collection(
+            Message::where('conversation_id', $conversation->id)
+                ->orderBy('created_at', 'desc')
+                ->paginate(15)
+        );
+
+        $collection->wrap('messages');
+        return $collection;
     }
 }

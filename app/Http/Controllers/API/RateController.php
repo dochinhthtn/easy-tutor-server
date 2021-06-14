@@ -24,7 +24,9 @@ class RateController extends Controller {
             ], 400);
         }
 
-        return RateResource::collection($tutor->rates()->with('assessor')->get());
+        $collection = RateResource::collection($tutor->rates()->with('assessor')->get());
+        $collection->wrap('rates');
+        return $collection;
     }
 
     public function addRate(RateEditorRequest $request) {
@@ -37,4 +39,5 @@ class RateController extends Controller {
 
         return new RateResource($rate);
     }
+    
 }
