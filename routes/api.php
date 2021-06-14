@@ -34,10 +34,10 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::group(['prefix' => 'user', 'middleware' => ['auth:api']], function () {
-    Route::get('/', [UserController::class, 'getInfo']);
+    Route::get('/info', [UserController::class, 'getInfo']);
     Route::get('/subject', [UserController::class, 'getSubjects']);
     Route::post('/subject', [UserController::class, 'updateSubjects']);
-    Route::get('/profile/{user:id?}', [UserController::class, 'getProfile']);
+    Route::get('/profile/{user?}', [UserController::class, 'getProfile']);
     Route::post('/profile', [UserController::class, 'updateProfile']);
 });
 
@@ -56,15 +56,16 @@ Route::group(['prefix' => 'post', 'middleware' => ['auth:api']], function () {
     Route::get('/{post:id}', [PostController::class, 'getPost']);
     Route::post('/', [PostController::class, 'addPost']);
     Route::put('/{post:id}', [PostController::class, 'editPost']);
-    Route::post('/{post:id}/apply', [PostController::class, 'applyPost']);
-    Route::post('/{post:id}/accept/{user:id}', [PostController::class, 'acceptTutor']);
-    Route::post('/{post:id}/decline/{user:id}', [PostController::class, 'declineTutor']);
+    Route::get('/{post:id}/tutor', [PostController::class, 'getPostTutor']);
+    Route::post('/{post:id}/tutor', [PostController::class, 'handleTutor']);
+    Route::get('/{post:id}/applicant', [PostController::class, 'getPostApplicants']);
+    Route::post('/{post:id}/applicant', [PostController::class, 'addPostApplicant']);
 });
 
 Route::group(['prefix' => 'conversation', 'middleware' => ['auth:api']], function () {
     Route::get('/', [ConversationController::class, 'getConversations']);
-    Route::get('/{conversation:id}', [ConversationController::class, 'getConversation']);
     Route::post('/', [ConversationController::class, 'addConversation']);
+    Route::get('/{conversation:id}/message', [ConversationController::class, 'getMessages']);
     Route::post('/{conversation:id}/message', [ConversationController::class, 'addMessage']);
 });
 
