@@ -13,6 +13,7 @@ class PostEditorRequest extends APIRequest
      */
     public function authorize()
     {
+        $post = $this->route();
         return true;
     }
 

@@ -15,6 +15,8 @@ class AddMessageRequest extends APIRequest
     public function authorize()
     {
         return true;
+        // $conversation = $this->route('conversation');
+        // return $conversation->id == 1;
     }
 
     /**

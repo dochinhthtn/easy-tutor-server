@@ -65,6 +65,7 @@ Route::group(['prefix' => 'post', 'middleware' => ['auth:api']], function () {
 Route::group(['prefix' => 'conversation', 'middleware' => ['auth:api']], function () {
     Route::get('/', [ConversationController::class, 'getConversations']);
     Route::post('/', [ConversationController::class, 'addConversation']);
+    Route::get('/{conversation:id}', [ConversationController::class, 'getConversation']);
     Route::get('/{conversation:id}/message', [ConversationController::class, 'getMessages']);
     Route::post('/{conversation:id}/message', [ConversationController::class, 'addMessage']);
 });

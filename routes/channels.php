@@ -24,3 +24,12 @@ Broadcast::channel('task', function() {
 Broadcast::channel('post.{id}', function ($user, $id) {
     return true;
 });
+
+Broadcast::channel("conversation", function($user) {
+    return true;
+});
+
+Broadcast::channel("conversation.{id}", function($user, $id) {
+    return true;
+});
+

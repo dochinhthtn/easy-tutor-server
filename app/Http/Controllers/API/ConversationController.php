@@ -31,7 +31,7 @@ class ConversationController extends Controller {
 
     public function getConversation(Conversation $conversation) {
         if ($conversation->hasUser($this->currentUser)) {
-            return new ConversationResource($conversation->load('messages', 'users'));
+            return new ConversationResource($conversation->load('users'));
         }
 
         return response()->json([
@@ -77,6 +77,7 @@ class ConversationController extends Controller {
     }
 
     public function addMessage(AddMessageRequest $request, Conversation $conversation) {
+        // return "a";
 
         if (!$conversation->hasUser($this->currentUser)) {
             return response()->json([
@@ -89,8 +90,10 @@ class ConversationController extends Controller {
             'user_id' => $this->currentUser->id,
             'conversation_id' => $conversation->id,
         ]);
+        // $msgRes = new MessageResource($message);
+        // return $msgRes->conversation_id;
 
-        event(new MessageSentEvent($message));
+        event(new MessageSentEvent($message, $conversation->id));
 
         return response()->json([
             'message' => 'Message was sent',

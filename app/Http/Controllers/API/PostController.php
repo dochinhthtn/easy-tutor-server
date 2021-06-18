@@ -106,8 +106,7 @@ class PostController extends Controller {
         $applicant = User::find($request->input('userId'));
         $post->applicants()->syncWithoutDetaching($applicant->id);
 
-        event(new NewApplicantEvent(new PostResource($post), new UserResource($applicant)));
-        event(new TaskEvent("my message"));
+        event(new NewApplicantEvent($post, $applicant));
         return response()->json([
             'message' => 'Successfully added applicant',
         ]);
