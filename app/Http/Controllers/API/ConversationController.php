@@ -49,15 +49,13 @@ class ConversationController extends Controller {
         }
 
         $result = DB::table('conversations_users')
-            ->select(DB::raw('COUNT(conversation_id) "conversationCount"'))
+            ->selectRaw('COUNT(conversation_id)')
             ->whereIn('user_id', $usersId)
             ->groupBy('conversation_id')
-            ->orderBy('conversationCount', 'desc')
-            ->limit(1)
             ->get();
 
-        $conversationCount = $result->pluck('conversationCount')->first();
-        if ($conversationCount == count($request->input('users'))) {
+        $conversationCount = $result->max('COUNT(conversation_id)');
+        if ($conversationCount == count($usersId)) {
             return response()->json([
                 'message' => 'Conversation has already created',
             ], 400);
