@@ -69,6 +69,8 @@ class ConversationController extends Controller {
         ]);
         $conversation->users()->attach($request->input('users'));
 
+        $conversation->load("users");
+
         event(new ConversationCreatedEvent($conversation));
 
         return new ConversationResource($conversation);
