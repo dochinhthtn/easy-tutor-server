@@ -49,7 +49,7 @@ class ConversationController extends Controller {
         }
 
         $result = DB::table('conversations_users')
-            ->selectRaw('COUNT(conversation_id) AS conversationCount')
+            ->select(DB::raw('COUNT(conversation_id) AS conversationCount'))
             ->whereIn('user_id', $usersId)
             ->groupBy('conversation_id')
             ->orderBy('conversationCount', 'desc')
