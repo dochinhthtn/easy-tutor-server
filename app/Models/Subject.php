@@ -18,4 +18,8 @@ class Subject extends Model
     public function posts() {
         return $this->hasMany(Post::class, 'subject_id');
     }
+
+    public function users() {
+        return $this->belongsToMany(User::class, 'users_subjects', 'subject_id', 'user_id');
+    }
 }
