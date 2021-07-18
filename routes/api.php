@@ -3,6 +3,7 @@
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ConversationController;
 use App\Http\Controllers\API\PostController;
+use App\Http\Controllers\API\RateController;
 use App\Http\Controllers\API\SubjectController;
 use App\Http\Controllers\API\UserController;
 use Illuminate\Support\Facades\Route;
@@ -71,5 +72,6 @@ Route::group(['prefix' => 'conversation', 'middleware' => ['auth:api']], functio
 });
 
 Route::group(['prefix' => 'rate', 'middleware' => ['auth:api']], function () {
-    
+    Route::get('/{user:id}', [RateController::class, 'getTutorRates']);
+    Route::post('/{user:id}', [RateController::class, 'evaluateTutor']);
 });
