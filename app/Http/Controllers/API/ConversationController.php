@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 class ConversationController extends Controller {
     //
 
-    private  ? User $currentUser;
+    private ?User $currentUser;
 
     public function __construct() {
         $this->currentUser = auth()->user();
@@ -42,7 +42,7 @@ class ConversationController extends Controller {
     public function addConversation(AddConversationRequest $request) {
         $usersId = $request->input('users');
 
-        if(!in_array($this->currentUser->id, $usersId)) {
+        if (!in_array($this->currentUser->id, $usersId)) {
             return response()->json([
                 'message' => 'Some error occured :((('
             ], 400);
@@ -101,7 +101,7 @@ class ConversationController extends Controller {
     }
 
     public function getMessages(Conversation $conversation) {
-        if(!$conversation->hasUser($this->currentUser)) {
+        if (!$conversation->hasUser($this->currentUser)) {
             return response()->json([
                 'message' => 'You are not in this conversation'
             ], 400);

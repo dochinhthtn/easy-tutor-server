@@ -33,4 +33,8 @@ class Post extends Model
     public function subject() {
         return $this->belongsTo(Subject::class, 'subject_id');
     }
+
+    public function comments() {
+        return $this->hasMany(Comment::class, 'post_id');
+    }
 }
