@@ -3,13 +3,13 @@ import React from 'react';
 import MessageContainer from './MessageContainer';
 
 /**
- * 
- * @param {{messages: Array<{content: string, userId: string}>, currentUser: {id: string}}} props 
+ *
+ * @param {{messages: Array<{content: string, userId: string}>, currentUser: {id: string}}} props
  */
 export default function MessageList(props) {
-    // console.log(props.messages);
+    console.log(props.messages);
     return (
-        <div className="p-3">
+        <div className="p-3" style={{maxHeight: '100%'}}>
             {
                 props.messages.slice(0).reverse().map(function (message) {
                     return <MessageContainer

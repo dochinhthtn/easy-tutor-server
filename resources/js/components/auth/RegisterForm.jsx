@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import Auth from '../models/Auth';
+import Auth from '../../models/Auth';
 
 export default function RegisterForm() {
 
@@ -94,8 +94,6 @@ export default function RegisterForm() {
                 />
                 <div className="text-danger">{error.passwordConfirmation}</div>
             </div>
-
-
 
             <div className="form-group">
                 <input

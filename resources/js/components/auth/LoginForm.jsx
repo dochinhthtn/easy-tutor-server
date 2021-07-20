@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 
-import Auth from '../models/Auth';
+import Auth from '../../models/Auth';
 
 export default function LoginForm() {
 

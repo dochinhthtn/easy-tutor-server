@@ -11,5 +11,6 @@ const Echo = new LaravelEcho({
     // client: Pusher
 });
 
+console.log(Echo);
 
 export default Echo;

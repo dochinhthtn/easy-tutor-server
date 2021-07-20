@@ -12,6 +12,7 @@ use App\Http\Resources\PostResource;
 use App\Http\Resources\UserResource;
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class PostController extends Controller {
     //
@@ -130,5 +131,9 @@ class PostController extends Controller {
         return response()->json([
             'message' => 'Successfully',
         ]);
+    }
+
+    public function addComment(Request $request, Post $post) {
+
     }
 }

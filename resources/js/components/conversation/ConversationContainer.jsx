@@ -7,11 +7,13 @@ import { Link } from 'react-router-dom';
 
 export default function ConversationContainer(props) {
 
-    let name = (props.name) ? props.name : props.users.map(user => user.name).join(", ");
+    let conversation = props.conversation;
+    let name = conversation.name ? conversation.name : conversation.users.map(user => user.name).join(',');
     return (
         <div className={"border mb-2 rounded " + ((props.active) ? "bg-light" : "")}>
             <div className="p-2">
-                <Link to={"/chat/" + props.id}>{name}</Link>
+                <Link to={"/conversation/" + conversation.id}>{name}</Link>
+                <div className="text-muted">{conversation.users.length} users</div>
             </div>
         </div>
     );

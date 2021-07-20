@@ -1,25 +1,28 @@
 import React, { useState } from 'react';
 
+/**
+ *
+ * @param {{conversation: Object}} props
+ */
 export default function SendMessageForm(props) {
 
     const [messageContent, setMessageContent] = useState('');
-    const [isSendingMessage, setIsSendingMessage] = useState(false);
+    const [isSending, setIsSending] = useState(false);
 
     const handleSendMessage = async (event) => {
         event.preventDefault();
 
         if (!props.conversation) {
-            alert("No conversation");
             return;
         }
 
         if (messageContent.trim() == '') return;
-        setIsSendingMessage(true)
+        setIsSending(true)
         let response = await props.conversation.addMessage({ content: messageContent.trim() });
         console.log(response);
 
         setMessageContent('');
-        setIsSendingMessage(false);
+        setIsSending(false);
     }
 
     return (
@@ -32,7 +35,7 @@ export default function SendMessageForm(props) {
                     placeholder="Enter message"
                 />
 
-                <button className="btn btn-primary" disabled={isSendingMessage}>Send</button>
+                <button className="btn btn-primary" disabled={isSending || !props.conversation}>Send</button>
             </div>
         </form>
     );

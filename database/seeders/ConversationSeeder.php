@@ -17,14 +17,9 @@ class ConversationSeeder extends Seeder
     public function run()
     {
         $users = User::all();
-        Conversation::factory()->count(10)->create()->each(function(Conversation $conversation) use ($users){
-            $memberIds = array_rand($users->pluck('id')->toArray(), 2);
-            $conversation->users()->attach($memberIds);
+        Conversation::factory()->count(10)->create()->each(function(Conversation $conversation) use ($users) {
+            $conversation->users()->saveMany($users->random(2));
 
-            Message::factory()->count(10)->create([
-                'conversation_id' => $conversation->id,
-                'user_id' => array_rand($memberIds, 1)
-            ]);
         });
     }
 }

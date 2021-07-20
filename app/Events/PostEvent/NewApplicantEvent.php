@@ -16,8 +16,8 @@ use Illuminate\Queue\SerializesModels;
 class NewApplicantEvent implements ShouldBroadcastNow {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public  ? PostResource $post;
-    public  ? UserResource $applicant;
+    public ?PostResource $post;
+    public ?UserResource $applicant;
 
     /**
      * Create a new event instance.

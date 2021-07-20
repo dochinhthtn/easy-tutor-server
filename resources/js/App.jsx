@@ -3,7 +3,7 @@ import { BrowserRouter, Redirect, Route, Switch } from 'react-router-dom';
 import Auth from './models/Auth';
 
 import AuthScreen from './screens/AuthScreen';
-import ChatScreen from './screens/ChatScreen';
+import ChatScreen from './screens/ConversationScreen';
 import IndexScreen from './screens/IndexScreen';
 
 export default function App(props) {
@@ -15,16 +15,14 @@ export default function App(props) {
             setIsLoggedIn(user != null);
         });
     }, [0]);
-        
+
     return (
         <BrowserRouter>
             {
                 (!isLoggedIn)
                     ? <Route path="/" component={AuthScreen} />
-                    : <>
-                        <Route path="/" component={IndexScreen} />
-                        <Route path="/chat/:id" component={ChatScreen} exact/>
-                    </>
+                    : <Route path="/" component={IndexScreen} />
+
             }
         </BrowserRouter>
     );

@@ -19,8 +19,14 @@ class UserController extends Controller {
         $this->currentUser = auth()->user();
     }
 
-    public function getInfo() {
-        return new UserResource($this->currentUser);
+    public function getInfo($id = 0) {
+        $user = User::find($id);
+
+        if(empty($user)) {
+            $user = $this->currentUser;
+        }
+
+        return new UserResource($user->load('profile'));
     }
 
     public function getSubjects() {

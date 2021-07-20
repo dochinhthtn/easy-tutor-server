@@ -2,8 +2,8 @@ import React from 'react';
 import ConversationContainer from './ConversationContainer';
 
 /**
- * 
- * @param {{active: string, conversations: Array}} props 
+ *
+ * @param {{active: string, conversations: Array}} props
  */
 export default function ConversationList(props) {
     let activeId = props.activeId;
@@ -14,11 +14,9 @@ export default function ConversationList(props) {
             {
                 conversations.map(function (conversation) {
                     return <ConversationContainer
-                        key={conversation.id}
-                        id={conversation.id}
-                        name={conversation.name}
-                        users={conversation.users}
+                        conversation={conversation}
                         active={conversation.id == activeId}
+                        key={conversation.id}
                     />
                 })
             }
