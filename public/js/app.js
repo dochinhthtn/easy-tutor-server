@@ -3468,8 +3468,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var lodash__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(lodash__WEBPACK_IMPORTED_MODULE_0__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  host: 'http://127.0.0.1:8000',
-  // host: 'http://easy-tutor-server.herokuapp.com',
+  // host: 'http://127.0.0.1:8000',
+  host: 'http://easy-tutor-server.herokuapp.com',
   port: '8000',
 
   get hostName() {
