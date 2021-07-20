@@ -12,50 +12,52 @@ use App\Http\Resources\PostResource;
 use App\Http\Resources\UserResource;
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class PostController extends Controller {
     //
 
-    public  ? User $currentUser;
+    public  ?User $currentUser;
 
     public function __construct() {
         $this->currentUser = auth()->user();
     }
 
-    public function getOwnPosts() {
+    public function getOwnPosts(Request $request) {
+        $query = Post::query()
+            ->where('user_id', $this->currentUser->id)
+            ->orderBy('created_at', 'desc')
+            ->with(['applicants', 'tutor', 'user']);
 
-        $collection = PostResource::collection(
-            $this->currentUser
-                ->posts()
-                ->orderBy('created_at', 'desc')
-                ->with(['applicants', 'tutor', 'user'])
-                ->paginate(15)
-        );
+        $this->attachFilter($query, $request);
+
+        $collection = PostResource::collection($query->paginate(15));
         $collection->wrap('posts');
         return $collection;
     }
 
-    public function getRecommendedPosts() {
+    public function getRecommendedPosts(Request $request) {
         $subjectIds = $this->currentUser->subjects()->get(['id'])->toArray();
+        $query = Post::whereIn('subject_id', $subjectIds)
+            ->orderBy('created_at', 'desc')
+            ->with(['applicants', 'tutor', 'user']);
 
-        $collection = PostResource::collection(
-            Post::whereIn('subject_id', $subjectIds)
-                ->orderBy('created_at', 'desc')
-                ->with(['applicants', 'tutor', 'user'])
-                ->paginate(15)
-        );
+        $this->attachFilter($query, $request);
+
+        $collection = PostResource::collection($query->paginate(15));
 
         $collection->wrap('posts');
         return $collection;
     }
 
-    public function getAllPosts() {
-        $collection = PostResource::collection(
-            Post::orderBy('created_at', 'desc')
-                ->with(['applicants', 'tutor', 'user'])
-                ->paginate(15)
-        );
+    public function getAllPosts(Request $request) {
+        $query = Post::orderBy('created_at', 'desc')
+            ->with(['applicants', 'tutor', 'user']);
+
+        $this->attachFilter($query, $request);
+
+        $collection = PostResource::collection($query->paginate(15));
         $collection->wrap('posts');
         return $collection;
     }
@@ -71,7 +73,6 @@ class PostController extends Controller {
     }
 
     public function getPostTutor(Post $post) {
-
     }
 
     public function addPost(PostEditorRequest $request) {
@@ -133,7 +134,24 @@ class PostController extends Controller {
         ]);
     }
 
-    public function addComment(Request $request, Post $post) {
+    public function attachFilter(Builder $query, Request $request) {
+        $address = $request->query('address');
+        $minOffer = $request->query('minOffer');
+        $maxOffer = $request->query('maxOffer');
+        $subjects = $request->query('subjects', '');
+        $hasApplicant = $request->query('hasApplicant');
 
+        if (!empty($address)) $query->where('address', 'like', "%$address%");
+        if (is_numeric($minOffer)) $query->where('offer', '>=', $minOffer);
+        if (is_numeric($maxOffer)) $query->where('offer', '<=', $maxOffer);
+        if (!empty($subjects)) $query->whereIn('subject_id', explode(',', $subjects));
+        if (!empty($hasApplicant) && $hasApplicant == 'true') $query->whereHas('applicants');
+        return $query;
+    }
+
+    public function testPost(Request $request) {
+        return response()->json([
+            'query' => $request->query()
+        ]);
     }
 }

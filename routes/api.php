@@ -51,6 +51,7 @@ Route::group(['prefix' => 'subject', 'middleware' => ['auth:api']], function () 
 });
 
 Route::group(['prefix' => 'post', 'middleware' => ['auth:api']], function () {
+    Route::get('/test', [PostController::class, 'testPost']);
     Route::get('/', [PostController::class, 'getAllPosts']);
     Route::get('/own', [PostController::class, 'getOwnPosts']);
     Route::get('/recommended', [PostController::class, 'getRecommendedPosts']);

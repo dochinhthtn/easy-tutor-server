@@ -22,36 +22,22 @@ class RateController extends Controller {
     public function getTutorRates(User $user) {
         if(!$user->checkRole('tutor')) {
             return response()->json([
-                'message' => 'This user is not a tutor'
+                'message' => "{$user->name} is not a tutor"
             ], 400);
         }
 
-        $result = DB::table('rates')
-            ->selectRaw('COUNT(id) AS rateCount')
-            ->selectRaw('AVG(star) AS avgStar')
-            ->where('tutor_id', $user->id)
-            ->groupBy('tutor_id')
-            ->first();
+        $query = Rate::query();
         
-        return response()->json($result);
+
+        return RateResource::collection($query->paginate(15))->additional([
+            // 'avg' =>
+        ]);
     }
 
-    public function getTutorRatesDetail(User $user) {
-        if(!$user->checkRole('tutor')) {
-            return response()->json([
-                'message' => 'This user is not a tutor'
-            ], 400);
-        }
-
-        $collection = RateResource::collection($user->rates()->with('assessor')->paginate(15));
-        $collection->wrap('rates');
-        return $collection;
-    }
-    
     public function evaluateTutor(EvaluateRequest $request, User $user) {
         if(!$user->checkRole('tutor')) {
             return response()->json([
-                'message' => 'This user is not a tutor'
+                'message' => "{$user->name} is not a tutor"
             ], 400);
         }
 

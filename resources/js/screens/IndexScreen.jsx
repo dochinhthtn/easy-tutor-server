@@ -3,6 +3,7 @@ import { Link, Route, Switch } from 'react-router-dom';
 
 import MainMenu from '../components/layout/MainMenu.jsx';
 import ConversationScreen from './ConversationScreen.jsx'
+import PostScreen from './PostScreen.jsx';
 
 export default function IndexScreen() {
 
@@ -14,9 +15,9 @@ export default function IndexScreen() {
             <div className="container mt-3">
                 <Switch>
                     <Route path="/user"><h1>User page</h1></Route>
-                    <Route path="/subject"><h1>Subject page</h1></Route>
-                    <Route path="/post"><h1>Post page</h1></Route>
-                    <Route path="/conversation/:id?"><ConversationScreen /></Route>
+                    <Route path="/subject/:id?"><h1>Subject page</h1></Route>
+                    <Route path="/post/:id?" component={PostScreen} />
+                    <Route path="/conversation/:id?" component={ConversationScreen} />
                 </Switch>
             </div>
         </div>

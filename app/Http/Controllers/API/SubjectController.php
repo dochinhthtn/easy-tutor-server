@@ -6,12 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SubjectRequest\SubjectEditorRequest;
 use App\Http\Resources\SubjectResource;
 use App\Models\Subject;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
 
 class SubjectController extends Controller {
     //
 
-    public function getSubjects() {
-        $collection = SubjectResource::collection(Subject::paginate(15));
+    public function getSubjects(Request $request) {
+        $query = Subject::query();
+        $this->attachSearch($query, $request);
+        $collection = SubjectResource::collection($query->paginate(15));
         $collection->wrap('subjects');
         return $collection;
     }
@@ -38,12 +42,9 @@ class SubjectController extends Controller {
         ]);
     }
 
-    public function findSubjects(string $keyword) {
-        $collection = SubjectResource::collection(
-            Subject::whereRaw("name LIKE '%$keyword%'")
-            ->paginate(15)
-        );
-        $collection->wrap('subjects');
-        return $collection;
+    public function attachSearch(Builder $query, Request $request) {
+        $keyword = $request->query('keyword');
+        if(!empty($keyword)) $query->where('name', 'like', "%$keyword%");
+        return $query;
     }
 }
