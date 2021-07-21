@@ -26,12 +26,16 @@ class RateController extends Controller {
             ], 400);
         }
 
-        $query = Rate::query();
-        
+        $query = $user->rates();
 
-        return RateResource::collection($query->paginate(15))->additional([
-            // 'avg' =>
+        $collection = RateResource::collection($query->paginate(15))->additional([
+            'avg' => $query->avg('star'),
+            'total' => $query->count()
         ]);
+
+        $collection->wrap('rates');
+
+        return $collection;
     }
 
     public function evaluateTutor(EvaluateRequest $request, User $user) {
@@ -42,13 +46,17 @@ class RateController extends Controller {
         }
 
         //TODO: check if rate exist
+        $rate = Rate::query()->updateOrCreate(
+            [
+                'assessor_id' => $this->currentUser->id,
+                'tutor_id' => $user->id
+            ],
+            [
+                'star' => $request->input('star'),
+                'comment' => $request->input('comment')
+            ]
+        );
 
-        $rate = Rate::create([
-            'assessor_id' => $this->currentUser->id,
-            'tutor_id' => $user->id,
-            'star' => $request->input('star'),
-            'comment' => $request->input('comment')
-        ]);
 
         return new RateResource($rate);
     }

@@ -17,8 +17,8 @@ class UserSeeder extends Seeder
     {
         //
         $subjects = Subject::all();
-        User::factory()->count(20)->create()->each(function(User $user) use ($subjects) {
-            $user->subjects()->saveMany($subjects->random(3));
+        User::factory()->count(100)->create()->each(function(User $user) use ($subjects) {
+            if($user->checkRole('tutor')) $user->subjects()->saveMany($subjects->random(3));
         });
     }
 }

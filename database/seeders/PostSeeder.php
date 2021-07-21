@@ -19,13 +19,6 @@ class PostSeeder extends Seeder {
 
         Post::factory()
             ->count(10)
-            ->has(
-                Comment::factory()
-                    ->count(10)
-                    ->state(function (array $attributes) use ($users) {
-                        return ['user_id' => $users->random()->id];
-                    })
-            )
             ->create();
     }
 }
