@@ -6,6 +6,9 @@ use App\Http\Controllers\API\PostController;
 use App\Http\Controllers\API\RateController;
 use App\Http\Controllers\API\SubjectController;
 use App\Http\Controllers\API\UserController;
+use App\Models\User;
+use App\Notifications\PostNotification\NewApplicantNotification;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,6 +29,15 @@ use Illuminate\Support\Facades\Route;
 Route::get('/token', function () {
     return response()->json([
         'token' => csrf_token(),
+    ]);
+});
+
+Route::get('/test-notification', function () {
+    $user = User::all()->random();
+    // Notification::send(['name' => 'Chinh'], new NewApplicantNotification($user));
+
+    return response()->json([
+        'message' => 'pushed notification'
     ]);
 });
 

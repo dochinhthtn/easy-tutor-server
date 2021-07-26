@@ -28,7 +28,8 @@ class PostEditorRequest extends APIRequest
             'subjectId' => 'required|exists:subjects,id',
             'description' => 'required',
             'address' => 'required',
-            'offer' => 'required|numeric'
+            'offer' => 'required|numeric',
+            'grade' => 'required|numeric'
         ];
     }
 }

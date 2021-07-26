@@ -15,7 +15,8 @@ class Post extends Model
         'description',
         'address',
         'offer',
-        'tutor_id'
+        'tutor_id',
+        'grade'
     ];
 
     public function user() {

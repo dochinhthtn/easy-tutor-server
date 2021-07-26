@@ -22,6 +22,7 @@ class PostResource extends JsonResource
             'description' => $this->description,
             'address' => $this->address,
             'offer' => $this->offer,
+            'grade' => $this->grade,
             'tutor' => $this->tutor,
             'applicants' => UserResource::collection($this->whenLoaded('applicants'))
         ];

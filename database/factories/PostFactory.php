@@ -32,7 +32,8 @@ class PostFactory extends Factory
             'description' => $this->faker->text,
             'address' => $this->faker->address,
             'offer' => $this->faker->numberBetween(10, 5000),
-            'tutor_id' => null
+            'tutor_id' => null,
+            'grade' => $this->faker->numberBetween(6, 12)
         ];
     }
 }
