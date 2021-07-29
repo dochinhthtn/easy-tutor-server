@@ -7,9 +7,10 @@ use App\Http\Requests\UserRequest\UpdateProfileRequest;
 use App\Http\Requests\UserRequest\UpdateSubjectRequest;
 use App\Http\Resources\SubjectResource;
 use App\Http\Resources\UserResource;
+use App\Models\File;
+use App\Models\Profile;
 use App\Models\User;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
+use App\Enums\EProfileFileType;
 
 class UserController extends Controller {
 
@@ -57,27 +58,34 @@ class UserController extends Controller {
         $profile->user_id = $this->currentUser->id;
         $profile->sex = $request->input('sex');
         $profile->address = $request->input('address');
-        $profile->achievements = json_encode($request->input('achivements', []));
-        if ($request->has('avatar')) {
-            $profile->avatar = $this->uploadAvatar($request->file('avatar'));
-        }
         $profile->save();
+
+        if($request->has('achievements') && !empty($request->input('achievements'))) {
+            File::query()->whereIn('id', $request->input('achievements'))->update([
+                'type' => EProfileFileType::ACHIEVEMENT,
+                'model_type' => Profile::class,
+                'model_id' => $profile->id
+            ]);
+        }
+
+        if($request->has('avatar') && !empty($request->input('avatar'))) {
+            File::find($request->input('avatar'))->update([
+                'type' => EProfileFileType::AVATAR,
+                'model_type' => Profile::class,
+                'model_id' => $profile->id
+            ]);
+        }
 
         return response()->json([
             'message' => 'Update profile successfully',
         ]);
     }
 
-    public function uploadAvatar(UploadedFile $image) {
-        Storage::disk("local")->put("public/", $image);
-        return asset("storage/{$image->hashName()}");
-    }
-
     public function getProfile(?User $user = null) {
         if ($user == null) {
-            return new UserResource($this->currentUser->load('profile'));
+            return new UserResource($this->currentUser->load(['profile', 'profile.avatar', 'profile.achievements', 'subjects']));
         } else {
-            return new UserResource($user->load('profile'));
+            return new UserResource($user->load(['profile', 'profile.avatar', 'profile.achievements', 'subjects']));
         }
     }
 }

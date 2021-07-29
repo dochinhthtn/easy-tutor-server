@@ -115,9 +115,10 @@ class PostController extends Controller {
             ], 400);
         }
         $post->applicants()->syncWithoutDetaching($applicant->id);
+        $post->load('user');
 
         // event(new NewApplicantEvent($post, $applicant));
-        Notification::send($this->currentUser, new NewApplicantNotification($post, $applicant));
+        Notification::send($post->user, new NewApplicantNotification($post, $applicant));
         return response()->json([
             'message' => 'Successfully added applicant',
         ]);

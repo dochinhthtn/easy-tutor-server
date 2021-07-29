@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ConversationController;
+use App\Http\Controllers\API\FileController;
 use App\Http\Controllers\API\PostController;
 use App\Http\Controllers\API\RateController;
 use App\Http\Controllers\API\SubjectController;
@@ -87,4 +88,9 @@ Route::group(['prefix' => 'conversation', 'middleware' => ['auth:api']], functio
 Route::group(['prefix' => 'rate', 'middleware' => ['auth:api']], function () {
     Route::get('/{user:id}', [RateController::class, 'getTutorRates']);
     Route::post('/{user:id}', [RateController::class, 'evaluateTutor']);
+});
+
+Route::group(['prefix' => 'file', 'middleware' => ['auth:api']], function () {
+    Route::post('/', [FileController::class, 'uploadFile']);
+    Route::post('/multiple', [FileController::class, 'uploadMultipleFiles']);
 });
